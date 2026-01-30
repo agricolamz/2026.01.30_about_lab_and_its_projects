@@ -339,12 +339,61 @@ WALS, но для языков Дагестана.
 
 - дать результаты запроса LLM для обобщения
 
+```{r}
+#| echo: false
+#| eval: false
+
+setwd("/home/agricolamz/work/scripts/r/markdown_EC_db")
+library(tidyverse)
+library(ragnar)
+
+store <- ragnar_store_connect("east_caucasian_db")
+
+ragnar_store_inspect(store)
+
+ragnar_retrieve_vss(store,
+                    method = "cosine_distance", 
+                    deoverlap = FALSE, 
+                    top_k = 20,
+                    query = "number",
+                    filter = language == "Avar") |> 
+  select(-embedding, -hash, -metric_name, -origin) |> 
+  relocate(text, .before = "geneological_classification") |> 
+  arrange(metric_value) |> 
+  View()
+```
+
+
 ## Векторный поиск по лингвистическим аннотациям
 
 Мы в какой-то момент собирали базу данных аннотаций статей по лингвистике.
 
 - англоязычные (79 тысяч) 626012700078-5
 - русскоязычные (19 тысяч) 626012700079-2
+
+```{r}
+#| echo: false
+#| eval: false
+
+
+store <- ragnar_store_connect("linguistic_abstracts")
+
+ragnar_store_inspect(store)
+
+ragnar_retrieve_vss(store,
+                    method = "cosine_distance", 
+                    deoverlap = FALSE, 
+                    top_k = 20,
+                    query = "number",
+                    filter = author == "Akira Watanabe") |> 
+  select(-embedding, -hash, -metric_name, -origin) |> 
+  relocate(text, .before = "author") |> 
+  relocate(title, .before = "author") |> 
+  arrange(metric_value) |> 
+  View()
+```
+
+
 
 ## {}
 
